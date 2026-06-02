@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>tram_simulator</name>
+  <version>0.1.0</version>
+  <description>6-state vehicle dynamics simulation node</description>
+  <maintainer email="dev@tram.local">dev</maintainer>
+  <license>MIT</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>rospy</depend>
+  <depend>std_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>std_srvs</depend>
+  <depend>tf</depend>
+  <depend>tram_msgs</depend>
+  <depend>tram_description</depend>
+  <exec_depend>rospkg</exec_depend>
+</package>

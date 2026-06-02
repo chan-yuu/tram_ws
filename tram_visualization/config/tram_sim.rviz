@@ -1,0 +1,112 @@
+Panels:
+  - Class: rviz/Displays
+    Name: Displays
+  - Class: rviz/Selection
+    Name: Selection
+  - Class: rviz/Views
+    Name: Views
+Visualization Manager:
+  Class: ""
+  Displays:
+    - Alpha: 1
+      Class: rviz/Grid
+      Color: 160; 160; 164
+      Name: Grid
+      Plane: XY
+      Reference Frame: map
+      Value: true
+      Cell Size: 5
+      Line Style: Lines
+
+    - Class: rviz/Path
+      Color: 0; 255; 0
+      Line Style: Lines
+      Line Width: 0.3
+      Name: Planned Path
+      Topic: /planning/path_viz
+      Value: true
+
+    - Class: rviz/Path
+      Color: 255; 100; 0
+      Line Style: Lines
+      Line Width: 0.2
+      Name: Actual Trace
+      Topic: /sim/path_trace
+      Value: true
+
+    - Class: rviz/Odometry
+      Name: Odometry
+      Topic: /sim/odom
+      Value: true
+      Keep: 1
+      Shape:
+        Line Width: 0.05
+        Shaft Length: 2.0
+        Head Length: 1.0
+
+    - Alpha: 1
+      Class: rviz/RobotModel
+      Collision Enabled: false
+      Name: Tram URDF
+      Robot Description: robot_description
+      TF Prefix: ""
+      Update Interval: 0
+      Value: true
+      Visual Enabled: true
+
+    - Class: rviz/MarkerArray
+      Name: Vehicle Marker
+      Topic: /viz/vehicle_marker
+      Value: true
+
+    - Class: rviz/MarkerArray
+      Name: Path Markers
+      Topic: /viz/path_markers
+      Value: true
+
+    - Class: rviz/MarkerArray
+      Name: Key Points
+      Topic: /viz/key_points
+      Value: true
+
+    - Class: rviz/MarkerArray
+      Name: Control Markers
+      Topic: /viz/control_markers
+      Value: true
+
+    - Class: rviz/Marker
+      Name: Lookahead
+      Topic: /viz/lookahead_marker
+      Value: true
+
+    - Class: rviz/Axes
+      Length: 3
+      Name: World Axes
+      Radius: 0.1
+      Reference Frame: map
+      Value: true
+
+    - Class: rviz/TF
+      Name: TF
+      Value: false
+      Marker Scale: 2
+
+  Global Options:
+    Background Color: 30; 30; 30
+    Fixed Frame: map
+    Frame Rate: 30
+
+  Tools:
+    - Class: rviz/Interact
+    - Class: rviz/MoveCamera
+    - Class: rviz/Select
+    - Class: rviz/FocusCamera
+
+  Views:
+    Current:
+      Class: rviz/TopDownOrtho
+      Near Clip Distance: 0.01
+      Scale: 6
+      Target Frame: map
+      X: 0
+      Y: 0

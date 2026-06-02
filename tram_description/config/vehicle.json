@@ -1,0 +1,32 @@
+{
+  "geometry": {
+    "wheelbase": 7.600,
+    "a_dist": 3.638,
+    "b_dist": 3.962,
+    "track_width": 1.880,
+    "wheel_radius": 0.402
+  },
+  "mass_inertia": {
+    "mass_awk": 11000.0,
+    "motor_inertia": 1.1,
+    "yaw_inertia_izz": null
+  },
+  "drivetrain": {
+    "final_drive_ratio": 16.6
+  },
+  "braking": {
+    "dec_normal_min": 1.5,
+    "dec_emergency_min": 3.5
+  },
+  "steering": {
+    "steer_ratio": 46.7,
+    "steer_rate_max_input_deg_s": 650.0,
+    "steer_rate_operating_input_deg_s": [50.0, 520.0],
+    "steer_rate_limit_input_deg_s": 520.0,
+    "steer_angle_max_front_deg": 20.0,
+    "steer_angle_max_rear_deg": 20.0
+  },
+  "environment": {
+    "max_slope_percent": 12.0
+  }
+}

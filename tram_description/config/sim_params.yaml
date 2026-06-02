@@ -1,0 +1,13 @@
+# Vehicle dynamics overrides loaded into /vehicle_6state_dyn/ namespace
+# (Simulation node params are set via explicit <param> tags in simulator.launch)
+vehicle_6state_dyn:
+  C_alpha_f: 180000.0   # N/rad, front cornering stiffness
+  C_alpha_r: 180000.0   # N/rad, rear cornering stiffness
+  mu0: 0.85             # nominal friction coefficient
+  c_roll: 0.015         # rolling resistance coefficient
+  cd_a: 6.0             # drag area (m²)
+  rho: 1.225            # air density (kg/m³)
+  grade_percent: 0.0    # operating grade (%)
+  eta_drive: 0.92       # drivetrain efficiency
+  h_cg: 1.1             # CG height (m)
+  n_drive_motors: 2     # number of drive motors

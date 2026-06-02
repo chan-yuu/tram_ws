@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>tram_description</name>
+  <version>0.1.0</version>
+  <description>Vehicle parameters and dynamics model for tram simulation</description>
+  <maintainer email="dev@tram.local">dev</maintainer>
+  <license>MIT</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <exec_depend>robot_state_publisher</exec_depend>
+</package>

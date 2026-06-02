@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tram 自动驾驶场景测试实验报告</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; overflow: hidden; font-family: "Segoe UI", "Microsoft YaHei", sans-serif; background: #1a1a2e; color: #eee; }
+  .slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; padding: 40px 60px; transition: opacity 0.4s ease; }
+  .slide.active { display: flex; opacity: 1; }
+  .slide h1 { font-size: 2.8em; margin-bottom: 20px; color: #4cc9f0; text-align: center; }
+  .slide h2 { font-size: 2em; margin-bottom: 24px; color: #4cc9f0; border-bottom: 2px solid #4cc9f0; padding-bottom: 8px; }
+  .slide h3 { font-size: 1.4em; margin: 16px 0 8px; color: #90e0ef; }
+  .slide p, .slide li { font-size: 1.15em; line-height: 1.7; max-width: 900px; text-align: left; }
+  .slide ul { margin-left: 24px; }
+  .slide .center { text-align: center; }
+  .slide .subtitle { font-size: 1.4em; color: #a0a0b0; margin-top: 12px; }
+  .slide .meta { font-size: 1em; color: #888; margin-top: 30px; }
+  table { border-collapse: collapse; margin: 16px auto; font-size: 0.95em; max-width: 95%; }
+  th, td { border: 1px solid #444; padding: 8px 12px; text-align: center; }
+  th { background: #16213e; color: #4cc9f0; }
+  tr:nth-child(even) { background: #16213e33; }
+  .img-row { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-top: 12px; }
+  .img-row img { max-height: 42vh; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
+  .img-single img { max-height: 55vh; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
+  .nav { position: fixed; bottom: 20px; right: 30px; font-size: 0.9em; color: #666; z-index: 100; }
+  .progress { position: fixed; bottom: 0; left: 0; height: 4px; background: #4cc9f0; transition: width 0.3s; z-index: 100; }
+  .badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 0.85em; margin-left: 8px; }
+  .badge-ok { background: #2a9d8f; }
+  .badge-warn { background: #e9c46a; color: #1a1a2e; }
+</style>
+</head>
+<body>
+
+<!-- Slide 1: Title -->
+<div class="slide active">
+  <h1>Tram 自动驾驶场景测试实验报告</h1>
+  <p class="subtitle">多场景路径跟踪与精准停车能力验证</p>
+  <p class="meta">测试平台：ROS Noetic + 6状态耦合动力学仿真<br>
+  控制器：PI+LQR（直线/道岔） | MPC（大曲率掉头）<br>
+  报告生成时间：2026-06-02</p>
+</div>
+
+<!-- Slide 2: Background -->
+<div class="slide">
+  <h2>实验背景与目的</h2>
+  <ul>
+    <li><strong>测试对象</strong>：现代有轨电车（4WS 四轮转向 + 前后轴独立驱动）</li>
+    <li><strong>核心算法</strong>：纵向 PI 速度控制 + 横向 LQR/MPC 路径跟踪 + 精准停车状态机</li>
+    <li><strong>验证目标</strong>：
+      <ul>
+        <li>不同速度等级下的精准停车与站台对齐能力</li>
+        <li>道岔换道中的横向跟踪精度与前后轮协同</li>
+        <li>大曲率（R=15m）180° 掉头的姿态恢复性能</li>
+      </ul>
+    </li>
+  </ul>
+</div>
+
+<!-- Slide 3: Scenarios Overview -->
+<div class="slide">
+  <h2>测试场景概览</h2>
+  <table>
+    <tr><th>场景 ID</th><th>描述</th><th>最高速度</th><th>控制器</th><th>关键挑战</th></tr>
+    <tr><td>standard_stop</td><td>标准站台停靠</td><td>60 km/h</td><td>PI+LQR</td><td>舒适减速 + 精准停车</td></tr>
+    <tr><td>highspeed_stop</td><td>高速站台停靠</td><td>80 km/h</td><td>PI+LQR</td><td>紧急制动能力</td></tr>
+    <tr><td>short_platform</td><td>短站台停靠</td><td>40 km/h</td><td>PI+LQR</td><td>紧凑站台 20m</td></tr>
+    <tr><td>switch_lane</td><td>道岔换道 8°</td><td>30 km/h</td><td>PI+LQR</td><td>横向跟踪 + 轮协同</td></tr>
+    <tr><td>uturn_180</td><td>180° 掉头 R=15m</td><td>8 m/s</td><td>MPC</td><td>大曲率 + 姿态恢复</td></tr>
+  </table>
+</div>
+
+<!-- Slide 4: Standard Stop -->
+<div class="slide">
+  <h2>标准站点停靠 <span class="badge badge-ok">正常</span></h2>
+  <div class="img-row">
+    <div><img src="standard_stop/speed_tracking.png" alt="speed"></div>
+    <div><img src="standard_stop/accel.png" alt="accel"></div>
+  </div>
+  <table style="margin-top:16px">
+    <tr><th>时长</th><th>距离</th><th>速度 RMSE</th><th>横向 Max</th><th>航向 Max</th><th>最大减速度</th></tr>
+    <tr><td>75.7 s</td><td>402.0 m</td><td>0.850 m/s</td><td>0.000 m</td><td>0.00°</td><td>—</td></tr>
+  </table>
+  <p class="center">典型“梯形”速度包络：加速 → 巡航 → 舒适制动 → 精准停车 → 重新加速</p>
+</div>
+
+<!-- Slide 5: Highspeed + Short Platform -->
+<div class="slide">
+  <h2>高速停靠 & 短站台停靠</h2>
+  <div class="img-row">
+    <div>
+      <h3>高速站点停靠 (80 km/h)</h3>
+      <img src="highspeed_stop/speed_tracking.png" alt="highspeed">
+      <p class="center">时长 55.7s | 距离 482.2m | 速度 RMSE 2.72 m/s</p>
+      <p class="center">最大减速度 <strong>-4.50 m/s²</strong> — 验证紧急制动能力</p>
+    </div>
+    <div>
+      <h3>短站台停靠 (40 km/h)</h3>
+      <img src="short_platform/speed_tracking.png" alt="short">
+      <p class="center">时长 61.1s | 距离 173.3m | 速度 RMSE 0.73 m/s</p>
+      <p class="center">紧凑站台 20m，低速精准停车</p>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 6: Switch Lane -->
+<div class="slide">
+  <h2>道岔换道 (8° 分岔)</h2>
+  <div class="img-row">
+    <img src="switch_lane/trajectory.png" alt="trajectory">
+    <img src="switch_lane/lateral_error.png" alt="lateral">
+    <img src="switch_lane/steering.png" alt="steering">
+  </div>
+  <table style="margin-top:12px">
+    <tr><th>时长</th><th>距离</th><th>横向 RMSE</th><th>横向 Max</th><th>航向 Max</th><th>前轮转角 Max</th></tr>
+    <tr><td>77.1 s</td><td>360.5 m</td><td>0.003 m</td><td>0.031 m</td><td>1.17°</td><td>8.1°</td></tr>
+  </table>
+  <p class="center">三次多项式过渡曲线，横向误差峰值仅 <strong>3.1 cm</strong>，前后轮协同良好</p>
+</div>
+
+<!-- Slide 7: U-turn -->
+<div class="slide">
+  <h2>180° 弯道掉头 (R=15m, MPC)</h2>
+  <div class="img-row">
+    <img src="uturn_180/trajectory.png" alt="trajectory">
+    <img src="uturn_180/steering.png" alt="steering">
+    <img src="uturn_180/lateral_error.png" alt="lateral">
+  </div>
+  <table style="margin-top:12px">
+    <tr><th>时长</th><th>距离</th><th>横向 RMSE</th><th>横向 Max</th><th>航向 Max</th><th>前轮转角 Max</th></tr>
+    <tr><td>78.1 s</td><td>217.3 m</td><td>0.107 m</td><td>0.524 m</td><td>7.38°</td><td>20.0°</td></tr>
+  </table>
+  <p class="center">入弯/出弯处曲率阶跃导致航向误差峰值 7.4°；前后轮转角均触及 <strong>20° 限幅</strong></p>
+</div>
+
+<!-- Slide 8: Summary Table -->
+<div class="slide">
+  <h2>综合指标对比</h2>
+  <table>
+    <tr><th>场景</th><th>时长(s)</th><th>距离(m)</th><th>均速(m/s)</th><th>横向 RMSE(m)</th><th>横向 Max(m)</th><th>航向 Max(°)</th><th>速度 RMSE(m/s)</th></tr>
+    <tr><td>标准站点停靠</td><td>75.7</td><td>402.0</td><td>5.31</td><td>0.000</td><td>0.000</td><td>0.00</td><td>0.850</td></tr>
+    <tr><td>高速站点停靠</td><td>55.7</td><td>482.2</td><td>8.65</td><td>0.000</td><td>0.000</td><td>0.00</td><td>2.720</td></tr>
+    <tr><td>短站台停靠</td><td>61.1</td><td>173.3</td><td>2.83</td><td>0.000</td><td>0.000</td><td>0.00</td><td>0.732</td></tr>
+    <tr><td>道岔换道</td><td>77.1</td><td>360.5</td><td>4.67</td><td>0.003</td><td>0.031</td><td>1.17</td><td>1.211</td></tr>
+    <tr><td>180° 掉头</td><td>78.1</td><td>217.3</td><td>2.78</td><td>0.107</td><td>0.524</td><td>7.38</td><td>1.382</td></tr>
+  </table>
+  <p class="center" style="margin-top:16px">直线场景横向/航向误差几乎为零；大曲率场景横向误差在 <strong>0.1 m 量级</strong>，满足有轨电车运行要求</p>
+</div>
+
+<!-- Slide 9: Conclusion -->
+<div class="slide">
+  <h2>结论与建议</h2>
+  <ul>
+    <li><strong>精准停车</strong>：三种速度等级下的站点停靠均能完成，速度跟踪误差在 0.7–2.7 m/s 范围内（主要由加减速过渡段贡献）</li>
+    <li><strong>道岔换道</strong>：横向误差峰值仅 3.1 cm，4WS 前后轮协同策略有效</li>
+    <li><strong>大曲率掉头</strong>：MPC 在 R=15m 场景下横向 RMSE 0.107 m，控制器已用尽 20° 转向限幅；如需进一步提升精度，可考虑：
+      <ul>
+        <li>略微降低弯中参考速度（当前 3 m/s）</li>
+        <li>增大 MPC 的 e_y 权重或延长预测时域</li>
+        <li>放宽执行器转向角限幅（若物理允许）</li>
+      </ul>
+    </li>
+    <li><strong>后续工作</strong>：引入 clothoid 过渡曲线平滑曲率阶跃，可降低入弯/出弯处的航向误差峰值</li>
+  </ul>
+</div>
+
+<!-- Slide 10: Thanks -->
+<div class="slide">
+  <h1>谢谢</h1>
+  <p class="subtitle">Questions & Discussion</p>
+  <p class="meta">完整数据与图表：<br>
+  /home/cyun/Documents/project/tram_ws/src/tram_bringup/experiments/report/</p>
+</div>
+
+<div class="nav"><span id="page">1 / 10</span></div>
+<div class="progress" id="progress"></div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+let current = 0;
+
+function show(i) {
+  slides.forEach((s, idx) => s.classList.toggle('active', idx === i));
+  document.getElementById('page').textContent = (i + 1) + ' / ' + slides.length;
+  document.getElementById('progress').style.width = ((i + 1) / slides.length * 100) + '%';
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { if (current < slides.length - 1) show(++current); }
+  else if (e.key === 'ArrowLeft') { if (current > 0) show(--current); }
+  else if (e.key === 'Home') { current = 0; show(current); }
+  else if (e.key === 'End') { current = slides.length - 1; show(current); }
+});
+
+show(0);
+</script>
+</body>
+</html>

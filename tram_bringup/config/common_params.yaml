@@ -1,0 +1,9 @@
+# Common parameters shared across all nodes
+vehicle:
+  wheelbase: 7.600
+  a_dist: 3.638
+  b_dist: 3.962
+  mass: 11000.0
+  final_drive_ratio: 16.6
+  wheel_radius: 0.402
+  eta_drive: 0.92

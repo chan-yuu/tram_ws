@@ -1,0 +1,66 @@
+# MPC controller parameters
+controller_mode: mpc
+control_freq: 20.0
+
+# Longitudinal PI (same as pi_lqr for longitudinal)
+pi_kp: 2.0
+pi_ki: 0.3
+max_accel: 3.5
+max_decel: 4.5
+
+# Precision stopping
+stop_control_distance: 90.0
+stop_comfort_decel: 1.2
+stop_crawl_distance: 5.0
+stop_crawl_speed: 0.6
+stop_final_distance: 0.8
+stop_final_speed: 0.18
+stop_min_crawl_speed: 0.08
+stop_crawl_accel_min: 0.35
+stop_crawl_entry_margin: 0.75
+stop_tolerance: 0.15
+stop_speed_tolerance: 0.05
+stop_hold_brake_decel: 1.5
+
+# Curvature speed limiter
+curve_speed_limit_enable: true
+curve_lateral_accel_limit: 1.2  # m/s², caps R=15m curve to about 4.2 m/s
+curve_speed_min: 2.0
+
+# Low-rate detailed control log for debugging U-turn tracking.
+debug_control_detail_enable: true
+debug_control_detail_period: 1.0
+debug_control_detail_curve_only: false
+debug_control_detail_kappa_threshold: 0.005
+debug_control_detail_error_threshold: 0.5
+
+# MPC horizon
+mpc_horizon: 15     # prediction steps
+mpc_dt: 0.05        # s per step → 750 ms horizon
+
+# State cost Q diagonal [e_y, e_psi, v_y, r_err]
+# r_err = r - kappa*vx. Heading and yaw-rate dominate so the controller
+# rotates through the turn (Ackermann counter-steering) instead of crab-walking.
+# Softened from the aggressive [3, 15, 0.1, 8] tuning to reduce the post-curve
+# heading oscillation on the return straight — at V_TURN=3 m/s the dynamics
+# are slow enough that these weights still track the arc within ~1 m.
+mpc_Q: [3.0, 10.0, 0.1, 4.0]
+# Input cost R as a 2x2 matrix. Diagonal penalises each input; off-diagonal
+# adds a cost on (delta_f + delta_r)^2 — large for same-phase (crab) steering
+# and zero for symmetric counter-steering. The slightly larger diagonal also
+# damps steering activity on the return straight.
+mpc_R: [[4.0, 2.5],
+        [2.5, 4.0]]
+
+# Constraints
+delta_max: 0.3491    # ≈ 20 deg (rad)
+delta_rate_max: 0.1  # rad/step
+
+# Resistance feedforward (must match tram_description/config/sim_params.yaml)
+c_roll: 0.015
+cd_a: 6.0
+rho: 1.225
+
+# Torque limits
+T_max_drive: 3000.0
+T_min_brake: -3000.0
