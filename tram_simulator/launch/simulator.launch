@@ -1,0 +1,23 @@
+<launch>
+  <arg name="dt"                 default="0.01"/>
+  <arg name="integration_method" default="rk4"/>
+  <arg name="initial_x"          default="0.0"/>
+  <arg name="initial_y"          default="0.0"/>
+  <arg name="initial_psi"        default="0.0"/>
+
+  <rosparam command="load"
+    file="$(find tram_description)/config/sim_params.yaml"/>
+
+  <include file="$(find tram_description)/launch/description.launch"/>
+
+  <node pkg="tram_simulator" type="sim_node.py" name="sim_node" output="screen">
+    <param name="dt"                  value="$(arg dt)"/>
+    <param name="integration_method"  value="$(arg integration_method)"/>
+    <param name="initial_x"           value="$(arg initial_x)"/>
+    <param name="initial_y"           value="$(arg initial_y)"/>
+    <param name="initial_psi"         value="$(arg initial_psi)"/>
+    <param name="heartbeat_timeout"   value="0.5"/>
+    <param name="heartbeat_brake_decel" value="1.0"/>
+    <param name="trace_interval"      value="0.05"/>
+  </node>
+</launch>

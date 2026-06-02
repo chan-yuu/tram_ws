@@ -1,0 +1,136 @@
+<?xml version="1.0"?>
+<robot name="tram_vehicle">
+  <!--
+    Frame convention:
+      base_link: ground projection of the vehicle CG; x/y/yaw match the 6-state model.
+      cg_link: physical CG height above base_link.
+      front_axle: front axle center, +x from base_link by a_dist = 3.638 m.
+      rear_axle: rear axle center, -x from base_link by b_dist = 3.962 m.
+  -->
+
+  <material name="tram_blue">
+    <color rgba="0.15 0.45 0.95 0.85"/>
+  </material>
+  <material name="wheel_dark">
+    <color rgba="0.05 0.05 0.05 1.0"/>
+  </material>
+  <material name="cg_red">
+    <color rgba="1.0 0.1 0.1 1.0"/>
+  </material>
+
+  <link name="base_link">
+    <visual>
+      <!-- Mesh offset: centre the car body on base_link (CG ground projection) -->
+      <origin xyz="-5.60 0.01 -0.51" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://tram_description/meshes/car.obj" scale="1.0 1.0 1.0"/>
+      </geometry>
+      <material name="tram_blue"/>
+    </visual>
+    <collision>
+      <!-- Simplified collision box aligned with the mesh bounding box -->
+      <origin xyz="0.01 0 2.19" rpy="0 0 0"/>
+      <geometry>
+        <box size="11.25 2.47 3.35"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 1.1" rpy="0 0 0"/>
+      <mass value="11000.0"/>
+      <inertia ixx="28000.0" ixy="0.0" ixz="0.0"
+               iyy="158910.0" iyz="0.0"
+               izz="158910.0"/>
+    </inertial>
+  </link>
+
+  <link name="front_axle"/>
+  <joint name="front_axle_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="front_axle"/>
+    <origin xyz="3.638 0 0.402" rpy="0 0 0"/>
+  </joint>
+
+  <link name="rear_axle"/>
+  <joint name="rear_axle_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="rear_axle"/>
+    <origin xyz="-3.962 0 0.402" rpy="0 0 0"/>
+  </joint>
+
+  <link name="front_left_wheel">
+    <visual>
+      <origin xyz="0 0 0" rpy="1.57079632679 0 0"/>
+      <geometry>
+        <cylinder radius="0.402" length="0.22"/>
+      </geometry>
+      <material name="wheel_dark">
+        <color rgba="0.05 0.05 0.05 1.0"/>
+      </material>
+    </visual>
+  </link>
+  <joint name="front_left_wheel_joint" type="fixed">
+    <parent link="front_axle"/>
+    <child link="front_left_wheel"/>
+    <origin xyz="0 0.94 0" rpy="0 0 0"/>
+  </joint>
+
+  <link name="front_right_wheel">
+    <visual>
+      <origin xyz="0 0 0" rpy="1.57079632679 0 0"/>
+      <geometry>
+        <cylinder radius="0.402" length="0.22"/>
+      </geometry>
+      <material name="wheel_dark"/>
+    </visual>
+  </link>
+  <joint name="front_right_wheel_joint" type="fixed">
+    <parent link="front_axle"/>
+    <child link="front_right_wheel"/>
+    <origin xyz="0 -0.94 0" rpy="0 0 0"/>
+  </joint>
+
+  <link name="rear_left_wheel">
+    <visual>
+      <origin xyz="0 0 0" rpy="1.57079632679 0 0"/>
+      <geometry>
+        <cylinder radius="0.402" length="0.22"/>
+      </geometry>
+      <material name="wheel_dark"/>
+    </visual>
+  </link>
+  <joint name="rear_left_wheel_joint" type="fixed">
+    <parent link="rear_axle"/>
+    <child link="rear_left_wheel"/>
+    <origin xyz="0 0.94 0" rpy="0 0 0"/>
+  </joint>
+
+  <link name="rear_right_wheel">
+    <visual>
+      <origin xyz="0 0 0" rpy="1.57079632679 0 0"/>
+      <geometry>
+        <cylinder radius="0.402" length="0.22"/>
+      </geometry>
+      <material name="wheel_dark"/>
+    </visual>
+  </link>
+  <joint name="rear_right_wheel_joint" type="fixed">
+    <parent link="rear_axle"/>
+    <child link="rear_right_wheel"/>
+    <origin xyz="0 -0.94 0" rpy="0 0 0"/>
+  </joint>
+
+  <link name="cg_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <sphere radius="0.12"/>
+      </geometry>
+      <material name="cg_red"/>
+    </visual>
+  </link>
+  <joint name="cg_link_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="cg_link"/>
+    <origin xyz="0 0 1.1" rpy="0 0 0"/>
+  </joint>
+</robot>

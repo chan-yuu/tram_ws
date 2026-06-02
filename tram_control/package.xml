@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>tram_control</name>
+  <version>0.1.0</version>
+  <description>PI+LQR and MPC control nodes for tram simulation</description>
+  <maintainer email="dev@tram.local">dev</maintainer>
+  <license>MIT</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>rospy</depend>
+  <depend>std_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>tf</depend>
+  <depend>tram_msgs</depend>
+  <exec_depend>rospkg</exec_depend>
+  <exec_depend>python3-scipy</exec_depend>
+  <exec_depend>python3-numpy</exec_depend>
+</package>

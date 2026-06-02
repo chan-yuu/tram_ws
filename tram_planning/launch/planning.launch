@@ -1,0 +1,9 @@
+<launch>
+  <arg name="scenario" default="standard_stop"/>
+  <arg name="ds"       default="0.5"/>
+
+  <node pkg="tram_planning" type="planning_node.py" name="planning_node" output="screen">
+    <param name="scenario" value="$(arg scenario)"/>
+    <param name="ds"       value="$(arg ds)"/>
+  </node>
+</launch>

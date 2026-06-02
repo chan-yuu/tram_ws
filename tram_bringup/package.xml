@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>tram_bringup</name>
+  <version>0.1.0</version>
+  <description>Top-level launch files for tram simulation scenarios</description>
+  <maintainer email="dev@tram.local">dev</maintainer>
+  <license>MIT</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <exec_depend>tram_simulator</exec_depend>
+  <exec_depend>tram_planning</exec_depend>
+  <exec_depend>tram_control</exec_depend>
+  <exec_depend>tram_visualization</exec_depend>
+</package>

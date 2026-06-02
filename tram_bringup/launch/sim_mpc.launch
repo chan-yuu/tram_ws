@@ -1,0 +1,29 @@
+<launch>
+  <arg name="scenario" default="standard_stop"/>
+  <arg name="rviz"     default="true"/>
+  <arg name="rqt_plot" default="false"/>
+
+  <!-- Simulator -->
+  <include file="$(find tram_simulator)/launch/simulator.launch"/>
+
+  <!-- Planning -->
+  <include file="$(find tram_planning)/launch/planning.launch">
+    <arg name="scenario" value="$(arg scenario)"/>
+  </include>
+
+  <!-- Control: MPC -->
+  <include file="$(find tram_control)/launch/control_mpc.launch"/>
+
+  <!-- Visualization markers -->
+  <include file="$(find tram_visualization)/launch/visualization.launch"/>
+
+  <!-- RViz (optional) -->
+  <node pkg="rviz" type="rviz" name="rviz" output="screen"
+        args="-d $(find tram_bringup)/config/add.rviz"
+        if="$(arg rviz)"/>
+
+  <!-- rqt_plot is optional; some pyqtgraph/numpy combinations crash on wheel events. -->
+  <node pkg="rqt_plot" type="rqt_plot" name="rqt_speed"
+        args="/debug/speed_actual/data /debug/speed_ref/data /debug/lateral_error/data"
+        if="$(arg rqt_plot)"/>
+</launch>

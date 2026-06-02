@@ -1,0 +1,12 @@
+# Scenario configuration
+# ds: path sampling interval (m)
+ds: 0.5
+
+# Available scenarios:
+#   standard_stop   — 60 km/h → station stop → 60 km/h → final stop (420 m)
+#   highspeed_stop  — 80 km/h → station stop → 80 km/h → final stop (350 m)
+#   short_platform  — 40 km/h → station stop → 40 km/h → final stop (260 m)
+#   switch_lane     — 8° fork lane change → final stop (360 m)
+#   uturn_180       — R=15m 180° U-turn, 8→4 m/s before curve → final stop (~207 m)
+
+scenario: standard_stop

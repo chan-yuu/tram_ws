@@ -1,0 +1,8 @@
+<launch>
+  <param name="robot_description" textfile="$(find tram_description)/urdf/tram.urdf"/>
+
+  <node pkg="robot_state_publisher" type="robot_state_publisher"
+        name="robot_state_publisher" output="screen">
+    <param name="publish_frequency" value="50.0"/>
+  </node>
+</launch>

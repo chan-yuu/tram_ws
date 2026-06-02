@@ -1,0 +1,57 @@
+# PI + LQR controller parameters
+controller_mode: pi_lqr
+control_freq: 50.0
+
+# Longitudinal PI
+# kp raised (1.5 → 2.0) for quicker catch-up once the error is sub-saturation.
+# max_accel raised (2.0 → 3.5) — the torque budget supports ≫10 m/s² physically;
+# the old 2.0 ceiling was the binding constraint preventing the vehicle from
+# ever reaching the high target speeds (e.g. 22.22 m/s in 80 m of approach).
+pi_kp: 2.0
+pi_ki: 0.3
+max_accel: 3.5      # m/s²
+max_decel: 4.5      # m/s², high-speed stop needs emergency margin
+
+# Precision stopping
+stop_control_distance: 90.0
+stop_comfort_decel: 1.2
+stop_crawl_distance: 5.0
+stop_crawl_speed: 0.6
+stop_final_distance: 0.8
+stop_final_speed: 0.18
+stop_min_crawl_speed: 0.08
+stop_crawl_accel_min: 0.35
+stop_crawl_entry_margin: 0.75
+stop_tolerance: 0.15
+stop_speed_tolerance: 0.05
+stop_hold_brake_decel: 1.5
+
+# Curvature speed limiter
+curve_speed_limit_enable: true
+curve_lateral_accel_limit: 1.2  # m/s², caps R=15m curve to about 4.2 m/s
+curve_speed_min: 2.0
+
+# Low-rate detailed control log for debugging U-turn tracking.
+debug_control_detail_enable: true
+debug_control_detail_period: 1.0
+debug_control_detail_curve_only: false
+debug_control_detail_kappa_threshold: 0.005
+debug_control_detail_error_threshold: 0.5
+
+# Lateral LQR — state cost Q diagonal [e_y, e_psi, v_y, r]
+lqr_Q: [5.0, 2.0, 0.1, 0.1]
+# Input cost R diagonal [delta_f, delta_r]
+lqr_R: [0.5, 0.5]
+
+# Torque limits (N·m per motor)
+T_max_drive: 3000.0
+T_min_brake: -3000.0
+
+# Steering limits — 20 deg required for R=15 m U-turn with feedback margin
+# (arctan(0.5 * L / R) = arctan(0.5 * 7.6 / 15) ≈ 14.2 deg feedforward alone)
+delta_max: 0.3491   # ≈ 20 deg (rad)
+
+# Resistance feedforward (must match tram_description/config/sim_params.yaml)
+c_roll: 0.015
+cd_a: 6.0
+rho: 1.225

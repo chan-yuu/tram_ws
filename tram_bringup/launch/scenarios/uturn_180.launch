@@ -1,0 +1,6 @@
+<launch>
+  <!-- U-turn needs MPC for better curvature tracking -->
+  <include file="$(find tram_bringup)/launch/sim_mpc.launch">
+    <arg name="scenario" value="uturn_180"/>
+  </include>
+</launch>

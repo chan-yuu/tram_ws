@@ -1,0 +1,5 @@
+<launch>
+  <include file="$(find tram_bringup)/launch/sim_pi_lqr.launch">
+    <arg name="scenario" value="highspeed_stop"/>
+  </include>
+</launch>
