@@ -11,13 +11,14 @@ ubuntu20
 catkin_make
 
 运行：
-启动可视化界面或者终端运行的形式
+启动可视化界面或者终端命令运行的形式
 
 ## 可视化界面
-修改：
+修改scenario_gui.py：
+
 <img width="401" height="51" alt="image" src="https://github.com/user-attachments/assets/a0f2bb77-8187-4ddb-a2a2-83a38175a244" />
 
-改为正确的路径，启动：
+改为正确的路径，然后启动：
 
 source devel/setup.bash
 
